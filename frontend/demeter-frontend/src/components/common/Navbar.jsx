@@ -1,7 +1,8 @@
-import { Sun, ShoppingBag, Plus, LogOut } from "lucide-react";
+import { Sun, Moon, ShoppingBag, Plus, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useCart } from "../../context/CartContext.jsx";
-import { useWallet } from "../../context/WalletContext.jsx";
+import { useCart } from "../../contexts/CartContext.jsx";
+import { useWallet } from "../../contexts/WalletContext.jsx";
+import { useTheme } from "../../contexts/ThemeContext.jsx";
 
 const Navbar = ({
   title = "Demeter",
@@ -25,9 +26,9 @@ const Navbar = ({
   profileClassName = "",
   exitClassName = "",
 }) => {
-  // Get cart and wallet data safely
-  const { cart = [] } = useCart() || {};
-  const { balance = 0 } = useWallet() || {};
+  const { cart = [] } = useCart();
+  const { balance = 0 } = useWallet();
+  const { theme, toggleTheme } = useTheme();
 
   // Get student name and initials
   const student = JSON.parse(localStorage.getItem("student"));
@@ -43,21 +44,21 @@ const Navbar = ({
       className={`
         sticky top-0 z-50
         w-full ${height}
-        bg-gray-900/60
+        bg-white/80 dark:bg-gray-900/60
         backdrop-blur-md
-        border-b border-white/10
+        border-b border-gray-200 dark:border-white/10
         flex justify-between items-center
         pl-3 pr-6 md:pl-4 md:pr-10
-        text-white
+        text-gray-900 dark:text-white
         ${className}
       `}
     >
       {/* LEFT SIDE */}
       <Link to="/" className="flex items-center gap-3 cursor-pointer">
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-lime-400 to-cyan-400 flex items-center justify-center font-bold text-slate-900">
+        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-lime-400 to-cyan-400 flex items-center justify-center font-bold text-slate-900 dark:text-slate-900">
           {logoLetter}
         </div>
-        <h3 className="text-lg font-semibold tracking-wide hover:text-cyan-300 transition">
+        <h3 className="text-lg font-semibold tracking-wide hover:text-cyan-500 dark:hover:text-cyan-300 transition">
           {title}
         </h3>
       </Link>
@@ -69,13 +70,13 @@ const Navbar = ({
           <Link to="/wallet">
             <div
               className={`
-                bg-slate-800
+                bg-gray-100 dark:bg-slate-800
                 h-10
                 pl-4 pr-2
                 rounded-full
                 flex items-center
-                text-yellow-400 font-semibold
-                hover:bg-slate-700
+                text-yellow-600 dark:text-yellow-400 font-semibold
+                hover:bg-gray-200 dark:hover:bg-slate-700
                 cursor-pointer
                 transition
                 ${walletClassName}
@@ -88,9 +89,9 @@ const Navbar = ({
                 ml-3
                 w-7 h-7
                 rounded-full
-                bg-teal-400
+                bg-teal-500 dark:bg-teal-400
                 flex items-center justify-center
-                text-slate-900
+                text-white dark:text-slate-900
               ">
                 <Plus size={16} />
               </div>
@@ -98,12 +99,21 @@ const Navbar = ({
           </Link>
         )}
 
-        {/* THEME */}
+        {/* THEME TOGGLE */}
         {showTheme && (
-          <Sun
-            size={20}
-            className={`cursor-pointer text-slate-300 hover:text-white transition ${iconClassName}`}
-          />
+          <button onClick={toggleTheme} className="focus:outline-none">
+            {theme === 'dark' ? (
+              <Sun
+                size={20}
+                className={`cursor-pointer text-yellow-500 dark:text-yellow-300 hover:text-yellow-400 dark:hover:text-yellow-200 transition ${iconClassName}`}
+              />
+            ) : (
+              <Moon
+                size={20}
+                className={`cursor-pointer text-gray-500 dark:text-slate-300 hover:text-gray-700 dark:hover:text-white transition ${iconClassName}`}
+              />
+            )}
+          </button>
         )}
 
         {/* CART */}
@@ -112,7 +122,7 @@ const Navbar = ({
             <div className="relative w-6 h-6 flex items-center justify-center">
               <ShoppingBag
                 size={20}
-                className={`text-slate-300 hover:text-white transition ${iconClassName}`}
+                className={`text-gray-500 dark:text-slate-300 hover:text-gray-700 dark:hover:text-white transition ${iconClassName}`}
               />
               {cart.length > 0 && (
                 <span className="
@@ -124,7 +134,7 @@ const Navbar = ({
                   rounded-full
                   w-4 h-4
                   flex items-center justify-center
-                  border border-slate-900
+                  border border-white dark:border-slate-900
                 ">
                   {cart.length}
                 </span>
@@ -137,10 +147,10 @@ const Navbar = ({
         {showProfile && (
           <div
             onClick={onProfileClick}
-            className={`w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center overflow-hidden cursor-pointer text-white text-xs font-semibold ${profileClassName}`}
+            className={`w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-600 flex items-center justify-center overflow-hidden cursor-pointer text-gray-700 dark:text-white text-xs font-semibold ${profileClassName}`}
           >
             {profilePhoto ? (
-              <img src={profilePhoto} className="w-full h-full object-cover" />
+              <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               initials
             )}

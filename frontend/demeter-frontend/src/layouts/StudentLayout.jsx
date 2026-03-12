@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/common/Navbar.jsx";
 import ProfileModal from "../components/common/ProfileModal.jsx";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../contexts/CartContext.jsx";
 
 export default function StudentLayout({ children }) {
 
-  const [darkMode, setDarkMode] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(null);
 
   const navigate = useNavigate();
+  const { clearCart } = useCart();
 
   /* LOGIN PROTECTION */
   useEffect(() => {
@@ -23,23 +24,11 @@ export default function StudentLayout({ children }) {
   }, []);
 
 
-  /* DARK MODE SYSTEM */
-  useEffect(() => {
-
-    const root = window.document.documentElement;
-
-    if (darkMode)
-      root.classList.add("dark");
-    else
-      root.classList.remove("dark");
-
-  }, [darkMode]);
-
-
   /* LOGOUT */
   const handleLogout = () => {
 
     localStorage.removeItem("student");
+    clearCart();
 
     navigate("/login");
 
@@ -51,8 +40,6 @@ export default function StudentLayout({ children }) {
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
 
       <Navbar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
         onAddBalance={() => navigate("/wallet")}
         onProfileClick={() => setProfileOpen(!profileOpen)}
         onExitClick={handleLogout}

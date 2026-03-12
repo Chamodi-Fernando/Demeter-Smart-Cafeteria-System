@@ -19,7 +19,7 @@ const DiscountCalculator = ({ cafeteriaId }) => {
       const data = await response.json();
       setDiscounts(data);
     } catch (error) {
-      console.error('Error fetching discounts:', error);
+      if (import.meta.env.DEV) console.error('Error fetching discounts:', error);
     } finally {
       setLoading(false);
     }
@@ -41,28 +41,28 @@ const DiscountCalculator = ({ cafeteriaId }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4">Active Discounts</h3>
+    <div className="bg-white dark:bg-dark-card rounded-lg shadow-md p-6">
+      <h3 className="text-lg font-semibold mb-4 dark:text-dark-text">Active Discounts</h3>
 
       {loading ? (
         <div className="text-center py-4">
-          <div className="animate-spin h-8 w-8 text-blue-500 mx-auto">&#x27F3;</div>
+          <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
         </div>
       ) : discounts.length > 0 ? (
         <div className="space-y-3">
           {discounts.map((discount) => (
             <div
               key={discount.discountId}
-              className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+              className="bg-gray-50 dark:bg-dark-bg rounded-lg p-4 border border-gray-200 dark:border-dark-border"
             >
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-semibold text-blue-600">{formatValue(discount)}</p>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-gray-600 dark:text-dark-textMuted mt-1">
                     Items: {discount.applicableItems || 'All'}
                   </p>
                   {discount.requirements && (
-                    <p className="text-xs text-gray-500 mt-1">{discount.requirements}</p>
+                    <p className="text-xs text-gray-500 dark:text-dark-textMuted mt-1">{discount.requirements}</p>
                   )}
                 </div>
                 <div className="text-right">
@@ -82,7 +82,7 @@ const DiscountCalculator = ({ cafeteriaId }) => {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 text-center py-4">
+        <p className="text-gray-500 dark:text-dark-textMuted text-center py-4">
           No active discounts for this cafeteria
         </p>
       )}
