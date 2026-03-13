@@ -26,8 +26,9 @@ const Navbar = ({
   profileClassName = "",
   exitClassName = "",
 }) => {
-  const { cart = [] } = useCart();
-  const { balance = 0 } = useWallet();
+  // Get cart and wallet data safely
+  const { cart = [] } = useCart() || {};
+  const { balance = 0 } = useWallet() || {};
   const { theme, toggleTheme } = useTheme();
 
   // Get student name and initials
@@ -105,12 +106,12 @@ const Navbar = ({
             {theme === 'dark' ? (
               <Sun
                 size={20}
-                className={`cursor-pointer text-yellow-500 dark:text-yellow-300 hover:text-yellow-400 dark:hover:text-yellow-200 transition ${iconClassName}`}
+                className={`cursor-pointer text-yellow-300 hover:text-yellow-200 transition ${iconClassName}`}
               />
             ) : (
               <Moon
                 size={20}
-                className={`cursor-pointer text-gray-500 dark:text-slate-300 hover:text-gray-700 dark:hover:text-white transition ${iconClassName}`}
+                className={`cursor-pointer text-slate-300 hover:text-white transition ${iconClassName}`}
               />
             )}
           </button>

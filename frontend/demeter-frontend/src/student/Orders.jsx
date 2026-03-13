@@ -48,7 +48,7 @@ export default function Orders() {
     return (
       <StudentLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <p className="text-gray-900 dark:text-white text-lg mb-4">
+          <p className="text-white text-lg mb-4">
             No order found. Please place an order first.
           </p>
           <Link
