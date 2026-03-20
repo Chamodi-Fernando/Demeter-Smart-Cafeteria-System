@@ -44,10 +44,15 @@ export const WalletProvider = ({ children }) => {
       subscribe(stompClient, "/topic/orders", () => {
         fetchBalance();
       });
+      subscribe(stompClient, `/user/${user.username}/queue/notifications`, (msg) => {
+        if (msg.type === "TOPUP_APPROVED") {
+          fetchBalance();
+        }
+      });
     });
 
     return () => disconnectWebSocket();
-  }, [isAuthenticated, user?.role, fetchBalance]);
+  }, [isAuthenticated, user?.role, user?.username, fetchBalance]);
 
   const refreshBalance = fetchBalance;
 
