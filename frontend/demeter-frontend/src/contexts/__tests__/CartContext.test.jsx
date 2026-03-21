@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CartProvider, useCart } from "../CartContext.jsx";
@@ -7,6 +7,12 @@ const mockShowToast = vi.fn();
 vi.mock("../ToastContext.jsx", () => ({
   useToast: () => ({
     showToast: mockShowToast,
+  }),
+}));
+
+vi.mock("../AuthContext.jsx", () => ({
+  useAuth: () => ({
+    user: { userId: 1, username: "testuser", role: "STUDENT" },
   }),
 }));
 
@@ -29,6 +35,10 @@ function CartConsumer() {
 }
 
 describe("CartContext", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it("starts with an empty cart", () => {
     render(
       <CartProvider>
