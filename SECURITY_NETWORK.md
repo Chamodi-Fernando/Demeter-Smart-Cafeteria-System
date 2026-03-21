@@ -54,8 +54,8 @@ Demeter has **three separate services** that work together:
 Docker Compose starts five containers in order:
 
 1. **MySQL** (database) starts first
-2. **AI Service** starts after the database is ready
-3. **Backend** starts after both MySQL and AI Service are healthy
+2. **AI Service** starts in parallel (uses `service_started` dependency — can initialize while backend builds)
+3. **Backend** starts after MySQL is healthy and AI Service has started
 4. **Frontend (Nginx)** starts last, once the backend is ready
 5. **DB Backup** (optional, `backup` profile) starts after MySQL is healthy — runs mysqldump every 5 minutes, gzip-compressed, retains 288 backups (24 hours) in `./backups/`. Enable with `docker compose --profile backup up -d`
 
@@ -114,7 +114,7 @@ This prevents accidental deployment with a weak secret.
 | Role | Can Access |
 |---|---|
 | **Anyone** (not logged in) | View cafeterias, menus, and reviews |
-| **Student** | Place orders, manage wallet (request top-ups), submit reviews |
+| **Student** | Place orders, manage wallet (request top-ups), submit reviews, view active discounts on menus |
 | **Staff** | Manage orders, menu, and discounts for their assigned cafeteria |
 | **Admin** | Manage users, approve/reject wallet top-up requests, direct top-up, view analytics, view audit logs |
 

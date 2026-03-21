@@ -370,7 +370,7 @@ All write operations are STAFF-only. Read operations are STAFF or ADMIN.
 | `GET` | `/api/discounts/{id}` | STAFF, ADMIN | Get discount by ID |
 | `GET` | `/api/discounts/active` | STAFF, ADMIN | List active discounts |
 | `GET` | `/api/discounts/cafeteria/{cafeteriaId}` | STAFF, ADMIN | List discounts by cafeteria |
-| `GET` | `/api/discounts/cafeteria/{cafeteriaId}/active` | STAFF, ADMIN | List active discounts by cafeteria |
+| `GET` | `/api/discounts/cafeteria/{cafeteriaId}/active` | STUDENT, STAFF, ADMIN | List active discounts by cafeteria (students use this for menu discount display) |
 | `GET` | `/api/discounts/pending` | STAFF, ADMIN | List pending AI-generated discounts |
 | `GET` | `/api/discounts/cafeteria/{cafeteriaId}/pending` | STAFF, ADMIN | List pending AI discounts by cafeteria |
 | `PUT` | `/api/discounts/{id}` | STAFF | Update a discount |
@@ -694,7 +694,11 @@ All WebSocket messages use the `NotificationMessage` schema:
 
 WebSocket connections are restricted to:
 - `http://localhost:5173` (dev)
-- `http://localhost:3000` (Docker)
+- `http://localhost:3000` (Docker HTTP)
+- `https://localhost` (Docker HTTPS)
+- `https://localhost:3443` (Docker HTTPS)
+
+**Important:** `SecurityConfig` CORS origins and `WebSocketConfig.setAllowedOriginPatterns()` are independent configs that must be kept in sync. If a new origin is added, update BOTH or WebSocket connections will get 403.
 
 ---
 

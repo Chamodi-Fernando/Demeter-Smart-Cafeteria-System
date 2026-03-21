@@ -193,8 +193,8 @@ A sticky, frosted-glass navigation bar (`sticky top-0 z-40`, `bg-white/80 dark:b
 | Role | Logo Style | Classes |
 |---|---|---|
 | Student | Gradient lime-to-cyan | `bg-gradient-to-br from-lime-400 to-cyan-400 text-slate-900` |
-| Staff | Solid amber | `bg-amber-400 text-slate-900` |
-| Admin | Solid red | `bg-red-500 text-white` |
+| Staff | Gradient yellow-to-amber | `bg-gradient-to-br from-yellow-300 to-amber-500 text-slate-900` |
+| Admin | Gradient red-to-rose | `bg-gradient-to-br from-red-400 to-rose-600 text-white` |
 
 The logo is a `w-9 h-9 rounded-lg` square showing the letter "D" by default, linking to the role's home route.
 
@@ -358,14 +358,15 @@ A React class component wrapping the entire application:
 
 #### StudentHome (`/`)
 
-- **Welcome section:** Personalized greeting with first name extracted from username
-- **Recommended for You:** Grid of 3 FoodCard (home variant) powered by AI recommendations. Items cached in `sessionStorage` (one fetch per browser session). Fallback to hardcoded items if API unavailable. Each card has "Add to Cart" button for 3-click ordering.
+- **Welcome section:** Centered personalized greeting (`text-5xl`/`text-6xl`, `font-extrabold`) with first name highlighted in teal (`text-teal-400`) and subtitle, vertical padding (`py-16`)
+- **Recommended for You:** Grid of 3 FoodCard (home variant) powered by AI recommendations. Items cached in `sessionStorage` (one fetch per browser session, invalidates stale cache without `tags` field). Fallback to hardcoded items if API unavailable. Each card shows dietary/category tags and "Add to Cart" button for 3-click ordering. AI recommendation type badge removed (internal label, not useful to students).
 - **Campus Cafeterias:** Grid of CafeteriaCard components showing all 3 cafeterias with hero images, ratings, and "View Menu" buttons
 - **Loading state:** Teal spinning circle (`border-teal-400 border-t-transparent`)
 
 #### CafeMenu (`/cafe/:id`)
 
-- **Floating navigation pill:** Portal-rendered fixed pill at top center that morphs between "Back to Dashboard" and the cafeteria name as user scrolls. Uses `IntersectionObserver` on the banner element. Text width animates via inline `transition: width 500ms ease-in-out`.
+- **Floating navigation pill:** Portal-rendered fixed pill (`z-[60]`) at top center that morphs between "Back to Dashboard" and the cafeteria name as user scrolls. Uses a scroll event listener with `getBoundingClientRect()` to detect when the banner scrolls past the navbar (70px). Text swaps via dual overlapping spans with callback refs (`useCallback`) for width measurement, crossfade opacity + Y-translate animation over 500ms.
+- **Discount badges:** Menu items with active discounts show a green "X% off" or "GK X off" badge on the image and a strikethrough original price next to the discounted price.
 - **Hero banner:** `h-[180px] sm:h-[260px] rounded-2xl` with dark overlay and centered cafeteria name
 - **Search + category filters:** SearchBar alongside pill-shaped filter buttons (`rounded-full`). Active filter: `bg-teal-400 text-black`. Inactive: bordered outline.
 - **Menu grid:** `md:grid-cols-2 lg:grid-cols-3 gap-8` of FoodCard (menu variant)
@@ -374,7 +375,7 @@ A React class component wrapping the entire application:
 #### Cart (`/cart`)
 
 - **Empty state:** Centered icon (`Sparkles` in gray circle), heading, subtext, and "Browse Cafeterias" teal button
-- **Cart items:** Left column with horizontal card layout (image + details + price + delete icon)
+- **Cart items:** Left column with horizontal card layout (image + details + quantity controls + price + delete icon). Quantity editing via +/− buttons; minus at qty=1 shows trash icon and removes item. Shows "GK X each" subtitle when qty > 1.
 - **Order summary:** Right column sticky card with subtotal, available discounts (radio buttons), discount amount, total, current balance display, and "Pay with Gold Krakens" button (`bg-yellow-400`)
 - **Recommendations:** "You might also like" section below cart with mini cards from AI (same-cafeteria, not-in-cart filtering)
 - **Layout:** `lg:grid-cols-[1.65fr_1fr]` — items get more space than summary
@@ -470,7 +471,7 @@ After selecting a portal, the form card appears with role-specific theming:
 
 - **Navbar links:** Home (logo click), Wallet (balance chip click), Cart (bag icon)
 - **In-page:** CafeteriaCard "View Menu" button navigates to `/cafe/:id`
-- **CafeMenu floating pill:** Portal-rendered `rounded-full` pill at top of viewport. Shows "Back to Dashboard" when banner is visible; morphs to cafeteria name when user scrolls past banner. Left arrow always navigates to `/`. Text transition animates with opacity and Y-translate over 500ms.
+- **CafeMenu floating pill:** Portal-rendered `rounded-full` pill (`z-[60]`) at top of viewport. Shows "Back to Dashboard" when banner is visible; morphs to cafeteria name when user scrolls past banner (detected via scroll listener + `getBoundingClientRect`). Left arrow always navigates to `/`. Text crossfade via dual spans with callback refs for width measurement, opacity + Y-translate over 500ms.
 - **Cart to Orders:** Successful checkout navigates to `/orders` with order state passed via `location.state`
 - **Wallet back button:** Standard bordered button "Back to Dashboard" at top of wallet page
 
@@ -504,11 +505,15 @@ After selecting a portal, the form card appears with role-specific theming:
 
 ### 8.2 Loading States
 
-All loading spinners follow the same pattern: `animate-spin` on a circle element with a role-appropriate border color:
+A shared `LoadingSpinner` component (`src/components/common/LoadingSpinner.jsx`) provides a dual-ring animation with role-based colors:
 
-- Student pages: `border-4 border-teal-400 border-t-transparent rounded-full`
-- Admin pages: `border-4 border-light-accent dark:border-dark-accent border-t-transparent rounded-full`
-- Standard sizes: `h-10 w-10` (page loading), `h-8 w-8` (section loading), `h-12 w-12` (payment processing)
+| Role | Ring Color | Inner Ring | Background |
+|---|---|---|---|
+| **Student** | `#14b8a6` (teal) | `rgba(20,184,166,0.4)` | `rgba(20,184,166,0.08)` |
+| **Staff** | `#f59e0b` (amber) | `rgba(245,158,11,0.4)` | `rgba(245,158,11,0.08)` |
+| **Admin** | `#ef4444` (red) | `rgba(239,68,68,0.4)` | `rgba(239,68,68,0.08)` |
+
+The spinner reads the user's role from `localStorage('authData')` (not `useAuth()`) to avoid context dependency issues in tests. Fixed 48px size. Used across all pages (AdminConsole, AnalyticsDashboard, StaffDashboard, CafeMenu, Cart, Orders, Wallet, etc.).
 
 ### 8.3 Empty States
 
@@ -525,6 +530,8 @@ Used in: Cart (Sparkles icon), Orders (text-only), Wallet transactions ("No tran
 Destructive actions use the native browser `window.confirm()` dialog:
 - Staff deletion: "Delete this staff member?"
 - Discount deletion: "Are you sure you want to delete this discount?"
+
+**Cart cafeteria switch:** When adding items from a different cafeteria, `CartContext` renders a custom confirmation dialog (not `window.confirm()`) with "Switch & Add" and "Keep Current Cart" buttons. The dialog is styled with an amber warning icon, explains the action, and shows the new item name. Confirming clears the existing cart and adds the new item.
 
 ### 8.5 Form Validation
 
@@ -789,7 +796,7 @@ Using Tailwind's `group` / `group-hover:` pattern on card components:
 ### 13.4 Special Animations
 
 - **FoodModal slide-up:** CSS `transform transition-transform duration-300 ease-out` with state-driven `translate-y-full` / `translate-y-0`
-- **CafeMenu floating pill text morph:** Dual overlapping `<span>` elements with `opacity-0 -translate-y-full` / `opacity-100 translate-y-0` toggled by scroll state, `duration-500 ease-in-out`
+- **CafeMenu floating pill text morph:** Dual overlapping `<span>` elements with callback ref width measurement, opacity crossfade + Y-translate (`translateY(-100%)` / `translateY(100%)`) toggled by scroll state, container width animates via `transition: width 500ms ease-in-out`, `duration-500 ease-in-out`
 - **Order progress pulse:** Active step icon uses `animate-pulse` for attention
 - **ThemeToggle thumb:** `transition-all duration-300` on thumb position (`left-0.5` to `left-[1.625rem]`)
 - **FoodModal close:** Programmatic 250ms delay between hiding (state change) and unmounting (onClose callback)
