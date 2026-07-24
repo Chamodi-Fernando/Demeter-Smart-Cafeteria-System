@@ -21,13 +21,20 @@ Because the system was a new deployment, I engineered **synthetic user data gene
 
 ### Core Microservices Developed
 
-* **Recommendation Engine (KNN):** 
+* **Recommendation Engine (KNN):**
+  
   Built a user-based collaborative filtering system to suggest personalized meals based on historical preferences.
-* **Comprehensive Fallback Logic:** 
+  
+* **Comprehensive Fallback Logic:**
+  
   Engineered multi-tier fallback mechanisms across all recommendation endpoints. If the primary KNN model cannot serve a prediction (e.g., a "cold-start" user with no history), the system seamlessly degrades to rule-based logic, serving personalized defaults or time-based suggestions (e.g., pushing breakfast items during morning hours) to ensure the UI never breaks.
-* **Dynamic Discount Service (Apriori Algorithm):** 
+  
+* **Dynamic Discount Service (Apriori Algorithm):**
+  
   Implemented association rule learning to automatically generate data-driven promotional strategies. The service analyzes transaction patterns to create Combo offers and BOGO deals, deliberately pairing popular items with "failing" or low-selling inventory to optimize sales and reduce food waste.
-* **Review Sentiment Analysis:** 
+  
+* **Review Sentiment Analysis:**
+  
   Integrated **NLTK** to process student feedback, automatically categorizing unstructured text reviews to give cafeteria management rapid insights into food quality and operational issues.
 
 ### Three Cafeterias
