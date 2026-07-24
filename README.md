@@ -13,7 +13,7 @@ The system is composed of three independently running services and a MySQL datab
 | **AI Service** | Python 3.11+, FastAPI | 8001 |
 | **Database** | MySQL 8 | 3306 |
 
-## AI & Backend Architecture (My Contributions)
+## AI Service Architecture (My Contributions)
 
 As part of the development team, I architected and built the AI and data-processing features. I implemented these as independent **microservices** to decouple the computationally heavy machine learning scripts from the core application. This ensured that AI inference tasks did not block standard user transactions and allowed each service to scale independently.
 
