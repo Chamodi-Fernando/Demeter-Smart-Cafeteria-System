@@ -13,6 +13,23 @@ The system is composed of three independently running services and a MySQL datab
 | **AI Service** | Python 3.11+, FastAPI | 8001 |
 | **Database** | MySQL 8 | 3306 |
 
+## AI & Backend Architecture (My Contributions)
+
+As part of the development team, I architected and built the AI and data-processing features. I implemented these as independent **microservices** to decouple the computationally heavy machine learning scripts from the core application. This ensured that AI inference tasks did not block standard user transactions and allowed each service to scale independently.
+
+Because the system was a new deployment, I engineered **synthetic user data generation** to bootstrap the models and heavily prioritized system resilience over raw model evaluation. 
+
+### Core Microservices Developed
+
+* **Recommendation Engine (KNN):** 
+  Built a user-based collaborative filtering system to suggest personalized meals based on historical preferences.
+* **Comprehensive Fallback Logic:** 
+  Engineered multi-tier fallback mechanisms across all recommendation endpoints. If the primary KNN model cannot serve a prediction (e.g., a "cold-start" user with no history), the system seamlessly degrades to rule-based logic, serving personalized defaults or time-based suggestions (e.g., pushing breakfast items during morning hours) to ensure the UI never breaks.
+* **Dynamic Discount Service (Apriori Algorithm):** 
+  Implemented association rule learning to automatically generate data-driven promotional strategies. The service analyzes transaction patterns to create Combo offers and BOGO deals, deliberately pairing popular items with "failing" or low-selling inventory to optimize sales and reduce food waste.
+* **Review Sentiment Analysis:** 
+  Integrated **NLTK** to process student feedback, automatically categorizing unstructured text reviews to give cafeteria management rapid insights into food quality and operational issues.
+
 ### Three Cafeterias
 - The Last Drop
 - Hex Core Cafe
